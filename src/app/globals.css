@@ -62,4 +62,8 @@ a {
   .height-container {
     padding-top: 6.5rem;
   }
+
+  .badge {
+    left: 20px !important;
+  }
 }
