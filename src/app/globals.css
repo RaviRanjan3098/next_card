@@ -40,3 +40,26 @@ a {
     color-scheme: dark;
   }
 }
+
+.listsize {
+  font-size: 24px;
+}
+
+.headerList {
+  position: fixed;
+  background-color: #ebebeb;
+  z-index: 99;
+  width: 100%;
+  padding: 10px;
+  padding-right: 16px;
+}
+
+.height-container {
+  padding-top: 4.5rem;
+}
+
+@media (max-width: 575.98px) {
+  .height-container {
+    padding-top: 6.5rem;
+  }
+}
