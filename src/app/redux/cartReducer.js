@@ -27,6 +27,24 @@ function cartReducer(state = initialState, action) {
     case "CLEAR_CART":
       return { ...state, cart: [] };
 
+    case "INCREASE_QTY":
+      return {
+        ...state,
+        cart: state.cart.map((item) =>
+          item.id === action.payload ? { ...item, qty: item.qty + 1 } : item
+        ),
+      };
+
+    case "DECREASE_QTY":
+      return {
+        ...state,
+        cart: state.cart.map((item) =>
+          item.id === action.payload && item.qty > 1
+            ? { ...item, qty: item.qty - 1 }
+            : item
+        ),
+      };
+
     default:
       return state;
   }

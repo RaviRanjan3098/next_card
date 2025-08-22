@@ -2,6 +2,8 @@
 
 import { useSelector, useDispatch } from "react-redux";
 import { MdDelete } from "react-icons/md";
+import { FaMinus } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 
 export default function CartSummaryList() {
   const { cart } = useSelector((state) => state);
@@ -9,6 +11,14 @@ export default function CartSummaryList() {
 
   const removeFromCart = (id) => {
     dispatch({ type: "REMOVE_FROM_CART", payload: id });
+  };
+
+  const increaseQty = (id) => {
+    dispatch({ type: "INCREASE_QTY", payload: id });
+  };
+
+  const decreaseQty = (id) => {
+    dispatch({ type: "DECREASE_QTY", payload: id });
   };
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
@@ -34,8 +44,26 @@ export default function CartSummaryList() {
               {cart.map((item) => (
                 <tr key={item.id}>
                   <td>{item.title}</td>
-                  <td className="text-center">{item.qty}</td>
-                  <td className="text-end">${(item.price * item.qty).toFixed(2)}</td>
+                  <td className="text-center">
+                    <div className="d-flex justify-content-center align-items-center gap-2">
+                      <button
+                        className="btn btn-outline-secondary btn-sm"
+                        onClick={() => decreaseQty(item.id)}
+                      >
+                        <FaMinus />
+                      </button>
+                      <span>{item.qty}</span>
+                      <button
+                        className="btn btn-outline-secondary btn-sm"
+                        onClick={() => increaseQty(item.id)}
+                      >
+                        <FaPlus />
+                      </button>
+                    </div>
+                  </td>
+                  <td className="text-end">
+                    ${(item.price * item.qty).toFixed(2)}
+                  </td>
                   <td className="text-center">
                     <button
                       className="btn btn-danger btn-sm d-none d-md-inline-block"

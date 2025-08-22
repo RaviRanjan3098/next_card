@@ -67,3 +67,24 @@ a {
     left: 20px !important;
   }
 }
+
+.filterTab {
+  position: absolute;
+  top: 2.4rem;
+  width: auto;
+  right: 2px;
+}
+
+
+.card {
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  background-color: rgb(219, 222, 221);
+}

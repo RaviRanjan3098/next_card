@@ -14,7 +14,11 @@ export default function Home() {
   // console.log(count", cartAdd);
   const [searchQuery, setSearchQuery] = useState("");
   const [allData, setAllData] = useState([])
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [sortOption, setSortOption] = useState("");
   // const [filterData, setFilterData] = useState([])
+  const [showFilters, setShowFilters] = useState(false);
 
   //update count state
   useEffect(() => {
@@ -25,44 +29,61 @@ export default function Home() {
     fetch("https://fakestoreapi.com/products")
       .then((res) => res.json())
       .then((data) => {
-        // console.log(data);
-        setAllData(data)
-        // setProducts(data);
+        setAllData(data);
+        setProducts(data);
+        // unique category  store here
+        const uniqueCategories = ["all", ...new Set(data.map((item) => item.category))];
+        setCategories(uniqueCategories);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
   }, []);
 
-  //  filter here
   useEffect(() => {
+    let filtered = [...allData];
+
+    // search filter
     if (searchQuery.trim() !== "") {
-      const filtered = allData.filter((item) =>
-        item.category.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter((item) =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setProducts(filtered);
-    } else {
-      setProducts(allData);
     }
-  }, [searchQuery, allData])
-  
+
+    // category filter
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((item) => item.category === selectedCategory);
+    }
+
+    // sorting
+    if (sortOption === "low-high") {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortOption === "high-low") {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (sortOption === "rating") {
+      filtered.sort((a, b) => b.rating.rate - a.rating.rate);
+    }
+
+    setProducts(filtered);
+  }, [searchQuery, selectedCategory, sortOption, allData]);
+
   const addToCart = (product) => {
     dispatch({ type: "ADD_TO_CART", payload: product });
   };
+
   return (
-    <div className=" mb-4  w-100 position-relative">
+    <div className=" mb-4 w-100 position-relative">
       <div className="d-flex flex-wrap justify-content-between headerList align-items-center mb-4">
-        <div className="col-sm-auto col-12">
+        <div className="">
           <h2 className="mb-0 listsize">Product Listing</h2>
         </div>
-        <div className="d-flex align-items-center gap-3 col-sm-auto col-12 sm:mt-0 mt-2">
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            placeholder="filter by category..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        <div className="d-flex align-items-center gap-3  sm:mt-0 mt-2">
+          <button
+            className="btn btn-outline-primary btn-sm"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            {showFilters ? "Close Filters" : "Filters"}
+          </button>
           <Link href="/cart" className="text-decoration-none">
             <div className="position-relative d-inline-block">
               <BsFillCartPlusFill size={24} className="text-primary" />
@@ -72,6 +93,52 @@ export default function Home() {
             </div>
           </Link>
         </div>
+        {/*all Filter Sectioncrender here */}
+        {showFilters && (
+          <div className="mt-3 filterTab">
+            <div className="card card-body shadow-sm">
+              {/* Search */}
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control form-control-sm"
+                  placeholder="Search product..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+
+              {/* Category */}
+              <div className="mb-3">
+                <select
+                  className="form-select form-select-sm"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat.toUpperCase()}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sorting */}
+              <div>
+                <select
+                  className="form-select form-select-sm"
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value)}
+                >
+                  <option value="">Sort</option>
+                  <option value="low-high">Price: Low → High</option>
+                  <option value="high-low">Price: High → Low</option>
+                  <option value="rating">Top Rated</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="row height-container px-4">
